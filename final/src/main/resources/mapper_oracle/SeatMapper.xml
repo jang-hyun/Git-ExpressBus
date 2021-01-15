@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper_oracle.SeatMapper">
+	<select id="maxSeat" resultType="int">
+		select count(*) from seat where bus_code = #{bus_code} 
+	</select>
+	<insert id = "insert">
+		insert into seat values (#{bus_code}, #{seat_num}, 'O')
+	</insert>
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper_oracle.TerminalMapper">
+	<insert id = "insert">
+		insert into terminal values (#{terminal_code}, #{terminal_name}, #{terminal_address}, #{terminal_tel})
+	</insert>
+	<update id = "update">
+		update terminal set terminal_tel = #{terminal_tel} where terminal_name = #{terminal_name}
+	</update>
+	<select id = "terminalList" resultType = "com.example.domain.TerminalVO">
+		select * from terminal where terminal_name like '%' || #{query} || '%'
+	</select>
+	<select id = "destList" resultType = "com.example.domain.TerminalVO">
+		select * from terminal where substr(terminal_name, 0, 2) != #{query} order by terminal_code
+	</select>
+	<select id = "parents" resultType = "com.example.domain.TerminalVO">
+		select * from terminal order by terminal_code
+	</select>
+	<select id = "read" resultType = "hashmap">
+		select * from terminal_list 
+		where start_terminal_code = #{start_terminal_code} and dest_terminal_code = #{dest_terminal_code}
+	</select>
+	<select id = "list" resultType="com.example.domain.TerminalVO">
+		select * from terminal
+	</select>
+</mapper>

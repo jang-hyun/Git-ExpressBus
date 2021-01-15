@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper_oracle.BadDriverMapper">
+	<select id="list" resultType="com.example.domain.BadDriverVO">
+		select * from bad_driver where
+		<if test = "type != -1">
+			type = #{type} and 
+		</if>
+		driver_code = #{driver_code}
+	</select>
+	<insert id = "insert">
+		insert into bad_driver (seq_board, driver_code, user_id, type, reportdate) 
+		values (#{seq_board}, #{driver_code}, #{user_id}, #{type}, sysdate)
+	</insert>
+	<select id = "reportedList" resultType = "hashmap">
+		select c.company_name, d.*, b.* from bus_driver d inner join bus_company c 
+		on d.company_code = c.company_code 
+		inner join bad_driver b 
+		on b.driver_code = d.driver_code 
+	</select>
+	<update id = "complete">
+		update bad_driver set status = 'O' where driver_code = #{driver_code} 
+		and user_id = #{user_id} and type = #{type}
+	</update>
+	<delete id = "delete">
+		delete from bad_driver where seq_board = #{seq_board}
+	</delete>
+</mapper>

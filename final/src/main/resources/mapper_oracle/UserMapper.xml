@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper_oracle.UserMapper">
+	<update id = "kakaoUpdate">
+		update bus_user set user_name = #{user_name}  
+		where user_id = #{user_id} 
+	</update>
+	<insert id="signUp">
+		insert into bus_user values 
+		(#{user_id}, #{user_password}, #{user_name}, #{user_tel}, #{user_email})
+	</insert>
+	<select id="login" resultType="com.example.domain.UserVO">
+		select * from bus_user where user_id=#{user_id}
+	</select>
+	<select id = "myTicketList" resultType = "com.example.domain.ReservationVO">
+		select r.*, "start", "dest" from reservation r inner join terminal_list t on 
+		r.platform_code = t.platform_code and r.start_terminal_code = t.start_terminal_code and r.dest_terminal_code = t.dest_terminal_code 
+		where user_id = #{user_id} 
+		order by reser_go, seat_num
+	</select>
+	<select id = "myPage" resultType = "com.example.domain.ReservationVO">
+		select * from (
+		select rownum rn, mp.* from (
+		select * from myPage 
+		where user_id = #{user_id} 
+		order by reser_go desc, seat_num) mp) 
+		where rn between #{maker.outStart} and #{maker.outLast}
+	</select>
+	<select id = "myPageCount" resultType = "int">
+		select count(*) from myPage where user_id = #{user_id}
+	</select>
+	<select id = "find" resultType = "string">
+		select
+		<if test = "type == 'id'">
+			user_id from bus_user where user_tel
+		</if>
+		<if test = "type == 'pw'">
+			user_password from bus_user where user_id
+		</if>
+		 = #{data}
+	</select>
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper_oracle.DriverMapper">
+	<insert id = "insert">
+		insert into bus_driver values (#{company_code}, #{driver_code}, #{driver_name})
+	</insert>
+	<select id = "findDriver" resultType="hashmap">
+		select t."start", t."dest", r.user_id, r.reser_go, d.driver_code, d.driver_name 
+		from reservation r inner join schedule s 
+		on r.platform_code = s.platform_code and r.start_terminal_code = s.start_terminal_code and r.dest_terminal_code = s.dest_terminal_code and r.schedule_start = s.schedule_start  
+		inner join bus_driver d 
+		on s.driver_code = d.driver_code 
+		inner join terminal_list t 
+		on r.start_terminal_code = t.start_terminal_code and r.dest_terminal_code = t.dest_terminal_code 
+		where user_id = #{user_id} and to_date(reser_go, 'yyyy/MM/dd HH24:mi:ss') &lt;= to_date(#{now}, 'yyyy/MM/dd HH24:mi:ss') 
+		group by t."start", t."dest", r.user_id, r.reser_go, d.driver_code, d.driver_name
+	</select>
+	<select id = "read" resultType="com.example.domain.DriverVO">
+		select * from bus_driver where driver_code = #{driver_code}
+	</select>
+	<update id = "punishment">
+		update bus_driver set badcount = badcount + 1 where driver_code = #{driver_code}
+	</update>
+</mapper>

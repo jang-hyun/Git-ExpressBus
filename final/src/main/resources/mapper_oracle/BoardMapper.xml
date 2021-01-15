@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper_oracle.BoardMapper">
+	<select id = "commentList" resultType = "com.example.domain.CommentVO">
+		select * from 
+		(select rownum rn, cmt.* from
+		(select * from board_comment where seq_board = #{seq_board} order by comment_date desc) cmt)
+		where rn between #{maker.outStart} and #{maker.outLast} 
+	</select>
+	<select id = "commentCount" resultType = "int">
+		select count(*) from board_comment where seq_board = #{seq_board}
+	</select>
+	<insert id = "commentInsert">
+		insert into board_comment values (#{seq_board}, #{user_id}, #{comment}, sysdate)
+	</insert>
+	<delete id = "commentDelete">
+		delete from board_comment where seq_board = #{seq_board}
+	</delete>
+	<delete id = "myCommentDelete">
+		delete from board_comment 
+		where seq_board = #{vo.seq_board} 
+		and user_id = #{vo.user_id} 
+		and "comment" = #{vo.comment} 
+		and to_char(comment_date, 'YYYY-MM-DD HH24:MI:SS') = #{date}
+	</delete>
+	<update id="myCommentUpdate">
+		update board_comment 
+		set "comment" = #{vo.comment} 
+		where seq_board = #{vo.seq_board} 
+		and user_id = #{vo.user_id} 
+		and to_char(comment_date, 'YYYY-MM-DD HH24:MI:SS') = #{date}
+	</update>
+   <select id = "list" resultType="com.example.domain.BoardVO">
+	select rn, seq_board, user_id, title, content, type, image, trade, driver_code, to_char(write_date, 'YYYY-MM-DD') as write_date from (
+	select rownum rn, tbl.* from 
+	(select * from bus_board where 
+	<if test = "boardType != '-1'">
+		type = #{boardType} and 
+	</if>
+	<if test = "searchType == 'title and content'">
+		 title like '%' || #{keyWord} || '%' or 
+		 content like '%' || #{keyWord} || '%' 
+	</if>
+	<if test = "searchType == 'title'">
+		 title like '%' || #{keyWord} || '%' 
+	</if>
+	<if test = "searchType == 'user_id'">
+		 user_id like '%' || #{keyWord} || '%' 
+	</if>
+	<if test = "searchType == 'content'">
+		 content like '%' || #{keyWord} || '%' 
+	</if>
+	<if test = "searchType == 'seq_board'">
+		 seq_board like '%' || #{keyWord} || '%' 
+	</if>
+	order by type 
+	<if test = "sort == 'title'">
+	 , title 
+	</if>
+	<if test = "sort == 'user_id'">
+	 , user_id  
+	</if>
+	<if test = "sort == 'content'">
+	 , content 
+	</if>
+	 <if test = "sortType == 'asc'">
+	 asc 
+	 </if>
+	 <if test = "sortType == 'desc'">
+	 desc 
+	 </if>
+	 ) tbl ) 
+	where rn between #{outStart} and #{outLast} 	
+   </select>
+   <select id = "totalCount" resultType = "int">
+	   	select count(*) from bus_board where 
+	   	<if test = "boardType != '-1'">
+			type = #{boardType} and 
+		</if>
+	<if test = "searchType == 'title and content'">
+		 title like '%' || #{keyWord} || '%' or 
+		 content like '%' || #{keyWord} || '%' 
+	</if>
+	<if test = "searchType == 'title'">
+		 title like '%' || #{keyWord} || '%' 
+	</if>
+	<if test = "searchType == 'user_id'">
+		 user_id like '%' || #{keyWord} || '%' 
+	</if>
+	<if test = "searchType == 'content'">
+		 content like '%' || #{keyWord} || '%' 
+	</if>
+	<if test = "searchType == 'seq_board'">
+		 seq_board like '%' || #{keyWord} || '%' 
+	</if>
+   </select>
+   <insert id = "insert">
+      insert into bus_board(seq_board, user_id, title, content, type, image, trade, driver_code)
+      values(seq_board.nextval, #{user_id}, #{title}, #{content}, #{type}, #{image}, #{trade}, #{driver_code})
+   </insert>
+   <select id = "read" resultType = "com.example.domain.BoardVO">
+      select * from bus_board where seq_board = #{seq_board}
+   </select>
+   <update id = "update">
+      update bus_board set title = #{title}, content = #{content}, type = #{type}, image = #{image}, trade = #{trade} 
+      where seq_board = #{seq_board}
+   </update>
+   <delete id = "delete">
+      delete from bus_board where seq_board = #{seq_board}
+   </delete>
+   <select id = "findMyReport" resultType = "int">
+	select max(seq_board) from bus_board where user_id = #{user_id} and type = 5
+   </select>
+   <select id = "myTradeList" resultType = "com.example.domain.BoardVO">
+   	select * from bus_board where type = 4 and user_id = #{user_id}
+   </select>
+   <select id = "driverList" resultType = "com.example.domain.BoardVO">
+   	select * from bus_board where type = 5 and user_id = #{user_id}
+   </select>
+   <delete id = "tradeDelete">
+   	delete from bus_board where type = 4 and user_id = #{user_id} and trade = #{trade}
+   </delete>
+</mapper>

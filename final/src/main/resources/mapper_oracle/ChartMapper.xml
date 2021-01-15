@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper_oracle.ChartMapper">
+   <select id="chart" resultType="hashmap">
+      select * from chart 
+		where scode = #{sCode} 
+		and dcode = #{dCode} 
+		and "date" = #{date} 
+		order by "date"
+   </select>
+   <select id = "dateList" resultType = "hashmap">
+   	select distinct("date") 
+   	from chart where scode = #{sCode} and dcode = #{dCode}
+	order by "date"
+   </select>
+</mapper>

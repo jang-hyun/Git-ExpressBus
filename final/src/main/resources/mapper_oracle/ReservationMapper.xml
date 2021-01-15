@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper_oracle.ReservationMapper">
+	<insert id = "insert">
+		insert into reservation (platform_code, start_terminal_code, dest_terminal_code, schedule_start, reser_date, user_id, bus_code, seat_num, reser_go, reser_price, ischild) 
+		values (#{platform_code}, #{start_terminal_code}, #{dest_terminal_code}, #{schedule_start}, sysdate, #{user_id}, #{bus_code}, #{seat_num}, #{reser_go}, #{reser_price}, #{ischild})
+	</insert>
+	<select id="reservedList" resultType="int">
+		select seat_num from reservation where bus_code = #{bus_code} and reser_go = #{reser_go} order by seat_num
+	</select>
+	<delete id = "delete">
+		delete from reservation where bus_code = #{bus_code} and seat_num = #{seat_num} and reser_go = #{reser_go}
+	</delete>
+	<update id = "update">
+		update reservation set 
+		user_id = #{user_id} 
+		where reser_go = #{reser_go} 
+		and seat_num = #{seat_num} 
+		and bus_code = #{bus_code} 
+	</update>
+	<update id = "trade">
+		update reservation set 
+		user_id = #{user_id} 
+		where platform_code = #{platform_code} 
+		and start_terminal_code = #{start_terminal_code} 
+		and dest_terminal_code = #{dest_terminal_code} 
+		and schedule_start = #{schedule_start} 
+		and reser_go = #{reser_go} 
+		and bus_code = #{bus_code} 
+		and ischild = #{ischild} 
+		and seat_num = #{seat_num} 
+		and reser_price = #{reser_price} 
+		and reser_date = #{reser_date}
+	</update>
+	<select id = "tradeRead" resultType="com.example.domain.ReservationVO">
+		select * from reservation 
+		where user_id = #{user_id} 
+		and start_terminal_code = #{start_terminal_code} 
+		and dest_terminal_code = #{dest_terminal_code} 
+		and seat_num = #{seat_num} 
+		and reser_go = #{reser_go}
+	</select>
+</mapper>

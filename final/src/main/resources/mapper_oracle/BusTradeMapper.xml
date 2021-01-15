@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper_oracle.BusTradeMapper">
+	<select id="mySendList" resultType="com.example.domain.BusTradeVO">
+		select * from bus_trade where send_user_id = #{user_id}
+	</select>
+	<select id="myReceiveList" resultType="com.example.domain.BusTradeVO">
+		select * from bus_trade where receive_user_id = #{user_id}
+	</select>
+	<insert id = "insert">
+		insert into bus_trade (seq_board, send_user_id, receive_user_id, send_ticket, receive_ticket) 
+		values (#{seq_board}, #{send_user_id}, #{receive_user_id}, #{send_ticket}, #{receive_ticket})
+	</insert>
+	<delete id = "delete">
+		delete from bus_trade where seq_board = #{seq_board}
+	</delete>
+	<delete id = "tradeDelete">
+		delete from bus_trade where send_user_id = #{user_id} and send_ticket = #{ticket} or receive_ticket = #{ticket}
+	</delete>
+</mapper>
